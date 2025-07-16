@@ -4,32 +4,12 @@ import pandas as pd
 import joblib
 import matplotlib.pyplot as plt
 import seaborn as sns
-import speech_recognition as sr
 import os
 
 # -----------------------------
 # Load the trained model
 model = joblib.load('fraud_detection_model.pkl')
 st.set_page_config(page_title="Bank Fraud Detector", layout="wide")
-
-# -----------------------------
-# Voice-to-text using SpeechRecognition
-def voice_to_text():
-    r = sr.Recognizer()
-    with sr.Microphone() as source:
-        st.info("🎤 Speak now...")
-        try:
-            audio = r.listen(source, timeout=5)
-            text = r.recognize_google(audio)
-            st.success(f"📝 You said: {text}")
-            return text
-        except sr.UnknownValueError:
-            st.error("😕 Could not understand audio.")
-        except sr.RequestError:
-            st.error("⚠️ Could not connect to Google API.")
-        except sr.WaitTimeoutError:
-            st.error("⌛ Listening timed out.")
-    return ""
 
 # -----------------------------
 st.title("🔍 Bank Transaction Fraud Detection")
@@ -74,26 +54,6 @@ with tab2:
         st.pyplot(fig)
     except Exception:
         st.warning("Dataset with 'isFraud' column not found or failed to load.")
-
-with tab3:
-    st.subheader("🎙️ Voice Assistant (Experimental)")
-    st.caption("Ask a question like: _What is SMOTE?_ or _Why is this fraud?_")
-
-    q = st.text_input("Type your question or use voice below:")
-
-    if st.button("🎤 Use Voice Input"):
-        voice_input = voice_to_text()
-        if voice_input:
-            q = voice_input
-
-    # Dummy response generator
-    if q:
-        if "smote" in q.lower():
-            st.info("SMOTE is used to balance imbalanced datasets by generating synthetic minority samples.")
-        elif "why" in q.lower() and "fraud" in q.lower():
-            st.info("Fraud is flagged when patterns look abnormal (e.g., large amount, late night, new location).")
-        else:
-            st.warning("🤔 Sorry, I couldn't understand your question.")
 
 # -----------------------------
 st.divider()
